@@ -1,28 +1,19 @@
 import React from 'react'
 import F from 'flyd'
+import {model_stream, input_stream, UserClickT} from '../model'
 
-const messageText = 'Text is shown'
-
-const initModelState = { checked: true }
-
-const checkboxInputToggle = F.stream()
-const checkboxStream = F.scan( (c, _) => !c, false, checkboxInputToggle)
+const toggle_input = () => input_stream(UserClickT.Toggle())
 
 export default class App extends React.Component {
 
-  constructor(props) {
-    super(props)
-    this.state = initModelState
-  }
-
-  componentDidMount() {
-    checkboxStream.map(c => this.setState({ checked: c }))
+  componentWillMount() { // boilerplate
+    F.on(s => this.setState(s), model_stream)
   }
 
   render() {
     return <div>
-      <input type="checkbox" value="box1" checked={this.state.checked} onChange={checkboxInputToggle}></input>
-      {(this.state.checked) ? <div>{messageText}</div> : <div/>}
+      <input type="checkbox" value="box1" checked={this.state.checked} onChange={toggle_input}></input>
+      {(this.state.checked) ? <div>text is shown</div> : null}
     </div>
   }
 
